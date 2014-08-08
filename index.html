@@ -1,54 +1,102 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
   <head>
-  <meta http-equiv="content-type" content="text/html; charset=windows-1250">
-  <meta name="generator" content="PSPad editor, www.pspad.com">
-  <title></title>
-  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>      
-        <script type="text/javascript" charset="utf-8">
+    <title>Ejemplo de Camera</title>
 
-            function onLoad()
-            {
-                  document.addEventListener("deviceready", onDeviceReady, true);
-            }
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
 
-            function exitFromApp()
-             {
-                navigator.app.exitApp();
-             }
+    var pictureSource;   // Origen de la imagen
+    var destinationType; // Formato del valor retornado
 
-        
-        
-        // Espere a que PhoneGap inicie
+    // Espera a que PhoneGap conecte con el dispositivo.
     //
-    document.addEventListener("deviceready", onDeviceReady, false);
+    document.addEventListener("deviceready",onDeviceReady,false);
 
-    // PhoneGap esta listo
+    // PhoneGap esta listo para usarse!
     //
     function onDeviceReady() {
-        // vacio
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
     }
 
-    // alerta cerrada
-    function alertDismissed() {
-        // hacer algo aquí
-    }
-
-    // Muestra un cuadro de dialogo personalizado
+    // Llamada cuando la foto se retorna sin problemas
     //
-    function showAlert() {
-    navigator.notification.alert(
-    'Eres el ganador!',     // mensaje (message)
-    alertDismissed,         // función 'callback' (alertCallback)
-    'Game Over',            // titulo (title)
-    'Cerrar'                // nombre del botón (buttonName)
-    );
+    function onPhotoDataSuccess(imageData) {
+      // Descomenta esta linea para ver la imagen codificada en base64
+      // console.log(imageData);
+
+      // Obtiene el elemento HTML de la imagen
+      //
+      var smallImage = document.getElementById('smallImage');
+
+      // Revela el elemento de la imagen
+      //
+      smallImage.style.display = 'block';
+
+      // Muestra la foto capturada
+      // Se usan reglas CSS para dimensionar la imagen
+      //
+      smallImage.src = "data:image/jpeg;base64," + imageData;
     }
+
+    // Llamada cuando la foto se retorna sin problemas
+    //
+    function onPhotoURISuccess(imageURI) {
+      // Descomenta esta linea para ver la ruta URI al fichero de imagen 
+      // console.log(imageURI);
+
+      // Obtiene el elemento HTML de la imagen
+      //
+      var largeImage = document.getElementById('largeImage');
+
+      // Revela el elemento de la imagen
+      //
+      largeImage.style.display = 'block';
+
+      // Muestra la foto capturada
+      // Se usan reglas CSS para dimensionar la imagen
+      //
+      largeImage.src = imageURI;
+    }
+
+    // Un botón llamara a esta función
+    //
+    function capturePhoto() {
+      // Toma la imagen y la retorna como una string codificada en base64
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50 });
+    }
+
+    // Un botón llamara a esta función
+    //
+    function capturePhotoEdit() {
+      // Toma la imagen, permite editarla y la retorna como una string codificada en base64
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true }); 
+    }
+
+    // Un botón llamara a esta función
+    //
+    function getPhoto(source) {
+      // Retorna la ruta del fichero de imagen desde el origen especificado
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50, 
+        destinationType: destinationType.FILE_URI,
+        sourceType: source });
+    }
+
+    // Llamado cuando algo malo ocurre
+    // 
+    function onFail(message) {
+      alert('Ocurrió un error: ' + message);
+    }
+
     </script>
   </head>
-  
-  <body style="background: blue;">
-  <button name="buttonClick" onclick="exitFromApp()">Click Me!</button>
-<p><a href="#" onclick="showAlert(); return false;">Mostrar cuadro de dialogo</a></p>
+  <body>
+    <button onclick="capturePhoto();">Capturar foto</button> <br>
+    <button onclick="capturePhotoEdit();">Capturar foto editable</button> <br>
+    <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">Desde la librería de imágenes</button><br>
+    <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">Desde el álbum de fotos</button><br>
+    <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+    <img style="display:none;" id="largeImage" src="" />
   </body>
 </html>
