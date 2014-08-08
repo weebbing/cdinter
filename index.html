@@ -17,11 +17,37 @@
                 navigator.app.exitApp();
              }
 
-        </script>
+        
+        
+        // Espere a que PhoneGap inicie
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // PhoneGap esta listo
+    //
+    function onDeviceReady() {
+        // vacio
+    }
+
+    // alerta cerrada
+    function alertDismissed() {
+        // hacer algo aquí
+    }
+
+    // Muestra un cuadro de dialogo personalizado
+    //
+    function showAlert() {
+    navigator.notification.alert(
+    'Eres el ganador!',     // mensaje (message)
+    alertDismissed,         // función 'callback' (alertCallback)
+    'Game Over',            // titulo (title)
+    'Cerrar'                // nombre del botón (buttonName)
+    );
+    }
   </head>
   
   <body style="background: blue;">
-  <button name="buttonClick" onclick="exitFromApp()">Click Me!</button>ds
-
+  <button name="buttonClick" onclick="exitFromApp()">Click Me!</button>
+<p><a href="#" onclick="showAlert(); return false;">Mostrar cuadro de dialogo</a></p>
   </body>
 </html>
